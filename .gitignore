@@ -1,2 +1,13 @@
 .logs
 node_modules
+
+.vscode/*
+
+bin
+lib
+include
+lib64
+pyvenv.cfg
+share
+data
+dtd
