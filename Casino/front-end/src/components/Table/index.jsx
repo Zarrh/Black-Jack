@@ -1,8 +1,11 @@
 import React from 'react';
+import { tableimg } from '../../assets';
 
 const Table = () => {
   return (
-    <div>index</div>
+    <div>
+      <img src={tableimg}/>
+    </div>
   );
 };
 

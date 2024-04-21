@@ -1,0 +1,4 @@
+WiFi.h
+esp32
+python-pyserial
+avr-gcc

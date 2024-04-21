@@ -17,10 +17,10 @@ from shapely.geometry import Polygon
 
 cardW=65
 cardH=90
-cornerXmin=4
+cornerXmin=3
 cornerXmax=13
-cornerYmin=4
-cornerYmax=25
+cornerYmin=3
+cornerYmax=24
 
 # === === #
 
@@ -104,7 +104,7 @@ card_values=['A','K','Q','J','10','9','8','7','6','5','4','3','2']
 backgrounds_pck_fn = data_dir + "/backgrounds.pck"
 
 # Pickle file containing the card images
-cards_pck_fn = data_dir+"/cards.pck"
+cards_pck_fn = data_dir + "/cards.pck"
 
 # imgW,imgH: dimensions of the generated dataset images 
 # === Resolution === #
@@ -167,7 +167,7 @@ def varianceOfLaplacian(img):
     """
     return cv2.Laplacian(img, cv2.CV_64F).var()
 
-def extract_card(img, output_fn=None, min_focus=120, debug=False):
+def extract_card(img, output_fn=None, min_focus=80, debug=False):
     """
     """
     
@@ -268,8 +268,8 @@ def extract_card(img, output_fn=None, min_focus=120, debug=False):
 
 # Test on one image the function for extracting the card #
 """
-debug = False
-img = cv2.imread("test/scene.png")
+debug = True
+img = cv2.imread("test/scene.jpg")
 display_img(img)
 valid, card = extract_card(img, "extracted_card.png", debug=debug)
 if valid:
@@ -283,7 +283,7 @@ plt.show()
 # Loop for extracting images #
 """
 video_dir="./data/video"
-extension="png"
+extension="jpg"
 imgs_dir="./data/cards"
 
 for suit in card_suits:
@@ -291,11 +291,12 @@ for suit in card_suits:
         
         card_name = value + suit # Name of the card #
         image_fn = card_name + "." + extension
-        output_dir=os.path.join(imgs_dir, card_name)
+        output_dir = os.path.join(imgs_dir, card_name)
+        image_fn_o = card_name + ".png"
         if not os.path.isdir(output_dir):
             os.makedirs(output_dir)
         img = cv2.imread(os.path.join(video_dir, image_fn))
-        valid, card = extract_card(img, os.path.join(output_dir, image_fn))
+        valid, card = extract_card(img, os.path.join(output_dir, image_fn_o))
         print(f"Extracted image {card_name}")
 """
 
@@ -789,6 +790,7 @@ plt.show()
 """
 
 # Test for three cards #
+"""
 bg = backgrounds.get_random()
 img1, card_val1, hulla1, hullb1 = cards.get_random()
 img2, card_val2, hulla2, hullb2 = cards.get_random()
@@ -797,3 +799,35 @@ img3, card_val3, hulla3, hullb3 = cards.get_random()
 newimg=Scene(bg, img1, card_val1, hulla1, hullb1, img2, card_val2, hulla2, hullb2, img3, card_val3, hulla3, hullb3)
 newimg.display()
 plt.show()
+"""
+
+# Generation of scenes with two cards #
+nb_cards_to_generate=10000
+save_dir="data/scenes/val"
+
+if not os.path.isdir(save_dir):
+    os.makedirs(save_dir)
+
+for i in tqdm(range(nb_cards_to_generate)):
+    bg = backgrounds.get_random()
+    img1, card_val1, hulla1, hullb1 = cards.get_random()
+    img2, card_val2, hulla2, hullb2 = cards.get_random()
+    
+    newimg = Scene(bg, img1, card_val1, hulla1, hullb1, img2, card_val2, hulla2, hullb2)
+    newimg.write_files(save_dir)
+
+# Generation of scenes with three cards #
+nb_cards_to_generate=5000
+save_dir="data/scenes/val"
+
+if not os.path.isdir(save_dir):
+    os.makedirs(save_dir)
+
+for i in tqdm(range(nb_cards_to_generate)):
+    bg = backgrounds.get_random()
+    img1, card_val1, hulla1, hullb1 = cards.get_random()
+    img2, card_val2, hulla2, hullb2 = cards.get_random()
+    img3, card_val3, hulla3, hullb3 = cards.get_random()
+    
+    newimg = Scene(bg, img1, card_val1, hulla1, hullb1, img2, card_val2, hulla2, hullb2, img3, card_val3, hulla3, hullb3)
+    newimg.write_files(save_dir)

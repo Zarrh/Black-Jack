@@ -7,7 +7,14 @@ const __dirname = path.resolve(); // Root
 const app = express();
 let image = null;
 let previousNumber = 0; // Just for testing purposes
-let players = [{name: "John", pot: 100}, {name: "Ben", pot: 100}, {name: "Tim", pot: 100}, {name: "Ian", pot: 100}, {name: "Luke", pot: 100}]; // Players list
+let players = [
+    {name: "John", pot: 100, cards: [], position: 1}, 
+    {name: "Ben", pot: 100, cards: [], position: 2}, 
+    {name: "Tim", pot: 100, cards: [], position: 3}, 
+    {name: "Ian", pot: 100, cards: [], position: 4}, 
+    {name: "Luke", pot: 100, cards: [], position: 5}
+]; // Players list
+let isDeckPresent = false; // Deck's presence
 
 app.use(express.static(path.join(__dirname, '../front-end/dist'))); // UI files
 
@@ -36,6 +43,19 @@ app.get('/send-players-app', (req, res) => {
     res.json({ players: players });
 }); // Sending players to app
 
+app.get('/send-deckPresent-app', (req, res) => {
+    res.json({ presence: isDeckPresent });
+}); // Sending deck's presence to app
+
+app.post('/get-deckPresent', (req, res) => {
+    const { payload } = req.query;
+    if (!payload) {
+        return res.status(400).json({ error: { message: 'No data received' } });
+    }
+    isDeckPresent = payload;
+    return res.status(200);
+}); // Receiving the deck's presence
+
 app.post('/get-image', (req, res) => {
     const { payload } = req.query;
     if (!payload) {
@@ -44,10 +64,6 @@ app.post('/get-image', (req, res) => {
     image = payload;
     return res.status(200);
 }); // Receiving the image
-
-app.get('/send-image-py', (req, res) => {
-    res.json({ image: image });
-}); // Sending the image to the python computer
 
 app.use((req, res, next) => {
     const error = new Error('Resource not found');
