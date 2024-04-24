@@ -1,122 +1,64 @@
 // sudo arduino-cli upload -p *PORT* --fqbn esp32:esp32:esp32 Router.ino
 
 #include <WiFi.h>
+#include "esp_wifi.h"
 
-const char* ssid     = "Casino_Royale";
+const char* ssid = "IoT_Casino";
 const char* password = "AceOfSpades";
+const char* local_ip = "192.168.4.10";
+const char* gateway_ip = "192.168.4.10";
+const int channel = 10;
+const bool hide_SSID = false;
+const int max_connection = 3;
 
-// Set web server port number to 80
-WiFiServer server(80);
+// MAC address of the device to assign a fixed IP address
+//uint8_t mac_to_assign_ip[] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF};
+// IP address to assign to the device
+//IPAddress fixed_ip(192, 168, 4, 10);
 
-// Variable to store the HTTP request
-String header;
+void display_connected_devices()
+{
+    wifi_sta_list_t wifi_sta_list;
+    tcpip_adapter_sta_list_t adapter_sta_list;
+    esp_wifi_ap_get_sta_list(&wifi_sta_list);
+    tcpip_adapter_get_sta_list(&wifi_sta_list, &adapter_sta_list);
 
-void setup() {
-  Serial.begin(115200);
-
-  Serial.print("Setting AP (Access Point)…");
-
-  WiFi.softAP(ssid, password);
-
-  IPAddress IP = WiFi.softAPIP();
-  Serial.print("AP IP address: ");
-  Serial.println(IP);
-  
-  server.begin();
+    if (adapter_sta_list.num > 0)
+    {
+        Serial.println("-----------");
+    }
+    for (uint8_t i = 0; i < adapter_sta_list.num; i++)
+    {
+        tcpip_adapter_sta_info_t station = adapter_sta_list.sta[i];
+        ip4_addr_t ip_addr;
+        memcpy(&ip_addr, &station.ip, sizeof(ip4_addr_t));
+        Serial.print((String)"[+] Device " + i + " | MAC : ");
+        Serial.printf("%02X:%02X:%02X:%02X:%02X:%02X", station.mac[0], station.mac[1], station.mac[2], station.mac[3], station.mac[4], station.mac[5]);
+        Serial.print((String) " | IP ");
+        Serial.println(ip4addr_ntoa(&ip_addr));
+    }
 }
 
-void loop(){
-  WiFiClient client = server.available();   // Listen for incoming clients
+void setup()
+{
+    Serial.begin(115200);
+    Serial.println("\n[*] Creating AP");
 
-  if (client) 
-  {
-    Serial.println("New Client.");          // print a message out in the serial port
-    String currentLine = "";                // make a String to hold incoming data from the client
-    while (client.connected()) 
-    {
-      if (client.available()) 
-      {
-        char c = client.read();             // read a byte, then
-        Serial.write(c);                    // print it out the serial monitor
-        header += c;
-        if (c == '\n') 
-        {
-          // if the current line is blank, you got two newline characters in a row.
-          // that's the end of the client HTTP request, so send a response:
-          if (currentLine.length() == 0) 
-          {
-            // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
-            // and a content-type so the client knows what's coming, then a blank line:
-            client.println("HTTP/1.1 200 OK");
-            client.println("Content-type:text/html");
-            client.println("Connection: close");
-            client.println();
-            
-            // turns the GPIOs on and off
-            if (header.indexOf("GET /26/on") >= 0)
-             {
-              Serial.println("GPIO 26 on");
-            } 
-            else if (header.indexOf("GET /26/off") >= 0) 
-            {
-              Serial.println("GPIO 26 off");
-            } 
-            else if (header.indexOf("GET /27/on") >= 0) 
-            {
-              Serial.println("GPIO 27 on");
-            } 
-            else if (header.indexOf("GET /27/off") >= 0) 
-            {
-              Serial.println("GPIO 27 off");
-            }
-            
-            // Display the HTML web page
-            client.println("<!DOCTYPE html><html>");
-            client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-            client.println("<link rel=\"icon\" href=\"data:,\">");
-            // CSS to style the on/off buttons 
-            // Feel free to change the background-color and font-size attributes to fit your preferences
-            client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-            client.println(".button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px;");
-            client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-            client.println(".button2 {background-color: #555555;}</style></head>");
-            
-            // Web Page Heading
-            client.println("<body><h1>ESP32 Web Server</h1>");
-            
-            // Display current state, and ON/OFF buttons for GPIO 26  
-            client.println("<p>GPIO 26 - State </p>");
-            // If the output26State is off, it displays the ON button       
-            client.println("<p><a href=\"/26/off\"><button class=\"button button2\">OFF</button></a></p>");
-               
-            // Display current state, and ON/OFF buttons for GPIO 27  
-            client.println("<p>GPIO 27 - State </p>");
-            // If the output27State is off, it displays the ON button       
-            client.println("<p><a href=\"/27/off\"><button class=\"button button2\">OFF</button></a></p>");
+    IPAddress local;
+    local.fromString(local_ip);
+    IPAddress gateway;
+    gateway.fromString(gateway_ip);
+    
+    WiFi.mode(WIFI_AP);
+    WiFi.softAPConfig(local, gateway, IPAddress(255, 255, 255, 0));
+    WiFi.softAP(ssid, password, channel, hide_SSID, max_connection);
 
-            client.println("</body></html>");
-            
-            // The HTTP response ends with another blank line
-            client.println();
-            // Break out of the while loop
-            break;
-          } 
-          else 
-          { // if you got a newline, then clear currentLine
-            currentLine = "";
-          }
-        } 
-        else if (c != '\r') 
-        {
-          currentLine += c;      // add it to the end of the currentLine
-        }
-      }
-    }
-    // Clear the header variable
-    header = "";
-    // Close the connection
-    client.stop();
-    Serial.println("Client disconnected.");
-    Serial.println("");
-  }
+    Serial.print("[+] AP Created with IP Gateway ");
+    Serial.println(WiFi.softAPIP());
+}
+
+void loop()
+{
+    display_connected_devices();
+    delay(5000);
 }

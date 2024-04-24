@@ -11,15 +11,14 @@ import {
 } from './assets';
 
 function App() {
-  const [number, setNumber] = useState(null);
-  const [players, setPlayers] = useState([{cards: ['As', 'Ks']}]); // TODO: put empty array
+  const [players, setPlayers] = useState([{cards: ['As', 'Ks', '3c'], position: "2", pot: 500}, {cards: ['Qs', 'Qh'], position: "3", pot: 1000}, {cards: ['7h', '8s', '2c'], position: "1", pot: 200}]); // TODO: put empty array
+  const [dealer, setDealer] = useState({cards: ['Kh', '2s', '3s']}); // TODO: put empty object
   const [deck, setDeck] = useState([
     'Ac', 'Kc', 'Qc', 'Jc', '10c', '9c', '8c', '7c', '6c', '5c', '4c', '3c', '2c', 
     'Ad', 'Kd', 'Qd', 'Jd', '10d', '9d', '8d', '7d', '6d', '5d', '4d', '3d', '2d', 
     'Ah', 'Kh', 'Qh', 'Jh', '10h', '9h', '8h', '7h', '6h', '5h', '4h', '3h', '2h', 
     'As', 'Ks', 'Qs', 'Js', '10s', '9s', '8s', '7s', '6s', '5s', '4s', '3s', '2s', 
-  ]);
-  const [deckPresent, setDeckPresent] = useState(1); // TODO: put 0
+  ]); // Todo: remove //
 
   const cardMap = {
     "Ac": CAc, "Kc": CKc, "Qc": CQc, "Jc": CJc, "10c": C10c, "9c": C9c, "8c": C8c, "7c": C7c, "6c": C6c, "5c": C5c, "4c": C4c, "3c": C3c, "2c": C2c,
@@ -29,49 +28,44 @@ function App() {
   };
 
   const cardPositions = {
-    "Deck": ["50%", "5%"], // Deck's position
-    "1": [["50%", "5%"]], // 1
-    "2": [["50%", "5%"]], // 2
-    "3": [["50%", "87%"], ["50%", "74%"], ["50%", "61%"]], // 3
-    "4": [["50%", "5%"]], // 4
-    "5": [["50%", "5%"]], // 5
-  };
+    "Dealer": [["50%", "5%"], ["40%", "5%"], ["60%", "5%"]], // Dealer's positions
+    "1": [["15%", "50%"], ["19%", "43%"], ["24%", "34%"]], // 1
+    //"2": [["30%", "77%"], ["33%", "65%"], ["36%", "53%"]], // 2
+    "2": [["50%", "87%"], ["50%", "74%"], ["50%", "61%"]], // 3
+    //"4": [["70%", "77%"], ["67%", "65%"], ["64%", "53%"]], // 4
+    "3": [["85%", "50%"], ["81%", "43%"], ["76%", "34%"]], // 5
+  }; // Positions of the cards //
+
+  const potPositions = {
+    "1": ["5%", "79%"],
+    "2": ["50%", "125%"],
+    "3": ["95%", "79%"],
+  }; // Positions of the pots //
+
+  const cardAngles = {
+    "Dealer": "0", // Dealer's angle
+    "1": "51", // 1
+    //"2": "27", // 2
+    "2": "0", // 3
+    //"4": "-27", // 4
+    "3": "-51", // 5
+  }; // Angles of the positions //
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/send-number-app');
-        const data = await response.json();
-        setNumber(data.number);
-      } catch (error) {
-        console.error('Error fetching number:', error);
-      }
-    }; // Just for testing purposes
 
     const fetchPlayers = async () => {
       try {
         const response = await fetch('/send-players-app');
         const data = await response.json();
         setPlayers(data.players);
+        setDealer(data.dealer);
       } catch (error) {
         console.error('Error fetching players:', error);
       }
     };
 
-    const fetchDeck = async () => {
-      try {
-        const response = await fetch('/send-deckPresent-app');
-        const data = await response.json();
-        setDeckPresent(data.presence);
-      } catch (error) {
-        console.error('Error fetching presence of deck:', error);
-      }
-    };
-
-    fetchData(); // Just for testing purposes
     fetchPlayers();
-    fetchDeck();
-    const interval = setInterval(fetchData, 5000);
+    const interval = setInterval(fetchPlayers, 2000);
 
     return () => clearInterval(interval);
   }, []);
@@ -84,30 +78,26 @@ function App() {
 
       <div className="table-container">
         <Table />
-        {deckPresent && (
-          <Card image={back} zIndex={2} x={cardPositions["3"][1][0]} y={cardPositions["3"][1][1]} />
-        )}
+        {dealer["cards"].map((card, i) => (
+          <Card key={i} image={cardMap[card]} zIndex={i} position={[cardPositions["Dealer"][i % dealer["cards"].length][0], cardPositions["Dealer"][i % dealer["cards"].length][1]]} angle={cardAngles["Dealer"]} />
+        ))}
          
         {players.map((player, index) => (
           <div key={index}>
             {player.cards.map((card, i) => (
-              <Card key={i} image={cardMap[card]} zIndex={1} x={cardPositions["Deck"][0]} y={cardPositions["Deck"][1]} />
+              <Card key={i} image={cardMap[card]} zIndex={i} position={[cardPositions[player.position][i % player.cards.length][0], cardPositions[player.position][i % player.cards.length][1]]} angle={cardAngles[player.position]} />
             ))}
-          </div>
-        ))}
-      </div>
-
-      {number !== null ? (
-        <p>Number received from server: {number}</p>
-      ) : (
-        <p>Loading...</p>
-      ) // Just for testing purposes
-      }
-
-      <div className="players-container">
-        {players.map((player, index) => (
-          <div key={index}>
-            <p>{player.name}</p>
+            <div style={{
+              position: "absolute", 
+              left: potPositions[player.position][0], 
+              top: potPositions[player.position][1], 
+              zIndex: 100, 
+              transform: `translate(-50%, +25%) rotate(${cardAngles[player.position]}deg)`,
+              fontSize: 50,
+              fontWeight: "bold"
+            }}>
+              {player["pot"]}$
+            </div>
           </div>
         ))}
       </div>

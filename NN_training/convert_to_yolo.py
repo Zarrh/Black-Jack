@@ -49,21 +49,24 @@ if len(sys.argv) != 4:
     print(f"Ex: {sys.argv[0]} data/cards/train data/cards.names data/train.txt")
     print("From xml files in images_dir, convert them in txt files with annotation information and build list.txt file")
     sys.exit(1)
+
 images_dir = sys.argv[1]
 classes_fn = sys.argv[2]
 list_fn = sys.argv[3]
+
 if not os.path.isfile(classes_fn):
     print(f"Classes file {classes_fn} is not a file")
     sys.exit(1)
 if not os.path.isdir(images_dir):
     print(f"{images_dir} is not a directory")
     sys.exit(1)
-with open(classes_fn,"r") as f:
+with open(classes_fn, "r") as f:
     classes = f.read().split("\n")
+
 classes = [c for c in classes if c!='']
 print(classes, len(classes))
 
-list_file = open(list_fn,"w")
+list_file = open(list_fn, "w")
 
 for i, xml_fn in enumerate(glob(images_dir + "/*.xml")):
     img_fn = xml_fn.replace(".xml", ".jpg")

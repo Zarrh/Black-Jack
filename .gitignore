@@ -11,3 +11,6 @@ share
 data
 dtd
 test
+
+config.yaml
+runs

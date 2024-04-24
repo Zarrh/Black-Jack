@@ -679,7 +679,7 @@ class Scene:
             self.listbba=[]
             self.img2=np.zeros((imgH,imgW,4),dtype=np.uint8)
             self.img2[decalY:decalY+cardH,decalX:decalX+cardW,:]=img2
-            self.img2,self.lkps2,self.bbs2=augment(self.img2,[cardKP,kpsa2,kpsb2],transform_1card)
+            self.img2, self.lkps2, self.bbs2=augment(self.img2,[cardKP,kpsa2,kpsb2],transform_1card)
 
             # mainPoly2: shapely polygon of card 2
             mainPoly2=kps_to_polygon(self.lkps2[0].keypoints[0:4])
@@ -694,7 +694,7 @@ class Scene:
                 ai=intersect.area
                 # If intersection area is small enough, we accept card 2
                 if (a-ai)/a > 1-intersect_ratio:
-                    self.listbba.append(BBA(self.bbs1[i-1],class1))
+                    self.listbba.append(BBA(self.bbs1[i-1], class1))
                 # If intersectio area is not small, but also not big enough, we want apply new transform to card 2
                 elif (a-ai)/a > intersect_ratio:
                     invalid=True
@@ -705,7 +705,7 @@ class Scene:
         self.class1=class1
         self.class2=class2
         for bb in self.bbs2:
-            self.listbba.append(BBA(bb,class2))
+            self.listbba.append(BBA(bb, class2))
         # Construct final image of the scene by superimposing: bg, img1 and img2
         self.bg=scaleBg.augment_image(bg)
         mask1=self.img1[:,:,3]
@@ -802,7 +802,7 @@ plt.show()
 """
 
 # Generation of scenes with two cards #
-nb_cards_to_generate=10000
+nb_cards_to_generate=15000
 save_dir="data/scenes/val"
 
 if not os.path.isdir(save_dir):
@@ -817,7 +817,7 @@ for i in tqdm(range(nb_cards_to_generate)):
     newimg.write_files(save_dir)
 
 # Generation of scenes with three cards #
-nb_cards_to_generate=5000
+nb_cards_to_generate=10000
 save_dir="data/scenes/val"
 
 if not os.path.isdir(save_dir):

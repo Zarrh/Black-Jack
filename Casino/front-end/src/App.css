@@ -22,22 +22,8 @@ h1 {
   margin-left: auto;
   margin-right: auto;
   margin-top: 20px;
-  margin-bottom: 80px;
+  margin-bottom: 320px;
   position: relative;
-}
-
-.table-container img {
-  width: 100%;
-  border-radius: 25px;
-}
-
-.players-container {
-  width: 100%;
-  text-align: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .footer-container {
