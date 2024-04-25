@@ -5,16 +5,14 @@
 
 const char* ssid = "IoT_Casino";
 const char* password = "AceOfSpades";
-const char* local_ip = "192.168.4.10";
-const char* gateway_ip = "192.168.4.10";
+
+IPAddress local_IP(192, 168, 4, 1);
+IPAddress gateway_IP(192, 168, 4, 1);
+IPAddress netmask_IP(255, 255, 255, 0);
+
 const int channel = 10;
 const bool hide_SSID = false;
-const int max_connection = 3;
-
-// MAC address of the device to assign a fixed IP address
-//uint8_t mac_to_assign_ip[] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF};
-// IP address to assign to the device
-//IPAddress fixed_ip(192, 168, 4, 10);
+const int max_connection = 6;
 
 void display_connected_devices()
 {
@@ -43,14 +41,9 @@ void setup()
 {
     Serial.begin(115200);
     Serial.println("\n[*] Creating AP");
-
-    IPAddress local;
-    local.fromString(local_ip);
-    IPAddress gateway;
-    gateway.fromString(gateway_ip);
     
     WiFi.mode(WIFI_AP);
-    WiFi.softAPConfig(local, gateway, IPAddress(255, 255, 255, 0));
+    WiFi.softAPConfig(local_IP, gateway_IP, netmask_IP);
     WiFi.softAP(ssid, password, channel, hide_SSID, max_connection);
 
     Serial.print("[+] AP Created with IP Gateway ");

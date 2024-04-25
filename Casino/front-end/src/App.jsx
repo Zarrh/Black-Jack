@@ -11,14 +11,8 @@ import {
 } from './assets';
 
 function App() {
-  const [players, setPlayers] = useState([{cards: ['As', 'Ks', '3c'], position: "2", pot: 500}, {cards: ['Qs', 'Qh'], position: "3", pot: 1000}, {cards: ['7h', '8s', '2c'], position: "1", pot: 200}]); // TODO: put empty array
-  const [dealer, setDealer] = useState({cards: ['Kh', '2s', '3s']}); // TODO: put empty object
-  const [deck, setDeck] = useState([
-    'Ac', 'Kc', 'Qc', 'Jc', '10c', '9c', '8c', '7c', '6c', '5c', '4c', '3c', '2c', 
-    'Ad', 'Kd', 'Qd', 'Jd', '10d', '9d', '8d', '7d', '6d', '5d', '4d', '3d', '2d', 
-    'Ah', 'Kh', 'Qh', 'Jh', '10h', '9h', '8h', '7h', '6h', '5h', '4h', '3h', '2h', 
-    'As', 'Ks', 'Qs', 'Js', '10s', '9s', '8s', '7s', '6s', '5s', '4s', '3s', '2s', 
-  ]); // Todo: remove //
+  const [players, setPlayers] = useState([]);
+  const [dealer, setDealer] = useState({"cards": []});
 
   const cardMap = {
     "Ac": CAc, "Kc": CKc, "Qc": CQc, "Jc": CJc, "10c": C10c, "9c": C9c, "8c": C8c, "7c": C7c, "6c": C6c, "5c": C5c, "4c": C4c, "3c": C3c, "2c": C2c,
@@ -59,6 +53,8 @@ function App() {
         const data = await response.json();
         setPlayers(data.players);
         setDealer(data.dealer);
+        console.log(players);
+        console.log(dealer);
       } catch (error) {
         console.error('Error fetching players:', error);
       }
@@ -79,13 +75,13 @@ function App() {
       <div className="table-container">
         <Table />
         {dealer["cards"].map((card, i) => (
-          <Card key={i} image={cardMap[card]} zIndex={i} position={[cardPositions["Dealer"][i % dealer["cards"].length][0], cardPositions["Dealer"][i % dealer["cards"].length][1]]} angle={cardAngles["Dealer"]} />
+          <Card key={i} image={cardMap[card]} zIndex={i} position={[cardPositions["Dealer"][i % cardPositions["Dealer"].length][0], cardPositions["Dealer"][i % cardPositions["Dealer"].length][1]]} angle={cardAngles["Dealer"]} />
         ))}
          
         {players.map((player, index) => (
           <div key={index}>
             {player.cards.map((card, i) => (
-              <Card key={i} image={cardMap[card]} zIndex={i} position={[cardPositions[player.position][i % player.cards.length][0], cardPositions[player.position][i % player.cards.length][1]]} angle={cardAngles[player.position]} />
+              <Card key={i} image={cardMap[card]} zIndex={i} position={[cardPositions[player.position][i % cardPositions[player.position].length][0], cardPositions[player.position][i % cardPositions[player.position].length][1]]} angle={cardAngles[player.position]} />
             ))}
             <div style={{
               position: "absolute", 

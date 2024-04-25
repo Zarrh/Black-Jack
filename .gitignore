@@ -5,6 +5,7 @@ node_modules
 bin
 lib
 include
+__pycache__
 lib64
 pyvenv.cfg
 share
