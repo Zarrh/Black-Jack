@@ -31,6 +31,7 @@ function App() {
   }; // Positions of the cards //
 
   const potPositions = {
+    "Dealer": ["50%", "37%"],
     "1": ["5%", "79%"],
     "2": ["50%", "125%"],
     "3": ["95%", "79%"],
@@ -49,7 +50,7 @@ function App() {
 
     const fetchPlayers = async () => {
       try {
-        const response = await fetch('/send-players-app');
+        const response = await fetch('/send-players');
         const data = await response.json();
         setPlayers(data.players);
         setDealer(data.dealer);
@@ -74,6 +75,34 @@ function App() {
 
       <div className="table-container">
         <Table />
+        {dealer["state"] == "busted" && (
+        <div style={{
+          position: "absolute", 
+          left: potPositions["Dealer"][0], 
+          top: potPositions["Dealer"][1], 
+          zIndex: 100, 
+          transform: `translate(-50%, +25%)`,
+          fontSize: 50,
+          fontWeight: "bold",
+          color: "red"
+        }}
+        >
+          Busted
+        </div>)}
+        {dealer["state"] == "BJ" && (
+        <div style={{
+          position: "absolute", 
+          left: potPositions["Dealer"][0], 
+          top: potPositions["Dealer"][1], 
+          zIndex: 100, 
+          transform: `translate(-50%, +25%)`,
+          fontSize: 50,
+          fontWeight: "bold",
+          color: "gold"
+        }}
+        >
+          Black Jack
+        </div>)}
         {dealer["cards"].map((card, i) => (
           <Card key={i} image={cardMap[card]} zIndex={i} position={[cardPositions["Dealer"][i % cardPositions["Dealer"].length][0], cardPositions["Dealer"][i % cardPositions["Dealer"].length][1]]} angle={cardAngles["Dealer"]} />
         ))}
@@ -93,6 +122,10 @@ function App() {
               fontWeight: "bold"
             }}>
               {player["pot"]}$
+              {player["state"] == "busted" && (<span style={{color: "red"}}>Busted</span>)}
+              {player["state"] == "BJ" && (<span style={{color: "gold"}}>Black Jack</span>)}
+              <br />
+              {player["bet"]}$
             </div>
           </div>
         ))}

@@ -7,7 +7,7 @@
 const char* WIFI_SSID = "IoT_Casino";
 const char* WIFI_PASS = "AceOfSpades";
 
-IPAddress local_IP(192, 168, 4, 2);
+IPAddress local_IP(192, 168, 4, 10);
 IPAddress gateway_IP(192, 168, 4, 1);
 IPAddress netmask_IP(255, 255, 255, 0);
  

@@ -9,20 +9,22 @@ import numpy as np
 import requests
 
 TITLE = "Live Table"
-WIDTH = 1200
-HEIGHT = 900
+WIDTH = 1088
+HEIGHT = 1088
 
-IPCam = '192.168.4.6'
+IPCam = '192.168.4.10'
+PortCam = 8080
 PortServer = 5555
 IPServer = f'127.0.0.1:{PortServer}'
 
 model = get_model(model_id="playing-cards-ow27d/4")
-camUrl = f'http://{IPCam}/cam-hi.jpg'
-serverURL = f'http://{IPServer}/get-cards-cam'
+camUrl = f'http://{IPCam}:{PortCam}/photo.jpg'
+serverURL = f'http://{IPServer}/get-cards'
 
 image = None
 detections = []
 MIN_CONFIDENCE = 0.6
+MIN_CONSECUTIVE_FRAMES = 5
 
 def receive():
 
