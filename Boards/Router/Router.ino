@@ -12,7 +12,6 @@ IPAddress netmask_IP(255, 255, 255, 0);
 
 const int channel = 10;
 const bool hide_SSID = false;
-const int max_connection = 6;
 
 void display_connected_devices()
 {
@@ -44,7 +43,7 @@ void setup()
     
     WiFi.mode(WIFI_AP);
     WiFi.softAPConfig(local_IP, gateway_IP, netmask_IP);
-    WiFi.softAP(ssid, password, channel, hide_SSID, max_connection);
+    WiFi.softAP(ssid, password, channel, hide_SSID);
 
     Serial.print("[+] AP Created with IP Gateway ");
     Serial.println(WiFi.softAPIP());

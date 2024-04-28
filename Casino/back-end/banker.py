@@ -6,9 +6,9 @@ resetKey = "7hAs$"
 IPMainServer = '127.0.0.1'
 urlJS = f'http://{IPMainServer}:{PortJS}'
 players = [
-    {"name": "John", "pot": 300, "bet": 0, "cards": [], "position": "1", "state": None}, 
-    {"name": "Ben", "pot": 400, "bet": 0, "cards": [], "position": "2", "state": None}, 
-    {"name": "Tim", "pot": 500, "bet": 0, "cards": [], "position": "3", "state": None}, 
+    {"pot": 500, "bet": 0, "cards": [], "position": "1", "state": None}, 
+    {"pot": 500, "bet": 0, "cards": [], "position": "2", "state": None}, 
+    {"pot": 500, "bet": 0, "cards": [], "position": "3", "state": None}, 
 ]
 dealer = {"state": None}
 mode = None
@@ -118,7 +118,7 @@ if __name__ == "__main__":
 
         if mode == None or mode == 0:
             get_mode_server()
-            time.sleep(.5)
+            time.sleep(3)
         else:
             if mode == 3:
                 if get_players_server():
@@ -140,11 +140,12 @@ if __name__ == "__main__":
                         player["state"] = "playing"
                     dealer["state"] = "playing"
                 if send_pots_server():
-                    time.sleep(10)
+                    time.sleep(15) # Wait 15 seconds to clean the table
                     send_reset_server()
                     mode = int(0)
                     send_mode_server()
             else:
                 get_mode_server()
+                time.sleep(2)
             time.sleep(.5)
 

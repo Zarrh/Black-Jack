@@ -4,7 +4,7 @@ import path from 'path';
 
 const __dirname = path.resolve(); // Root
 const PORT = 5555; // Port
-const adminKey = "7hAs$"; // Admin reset key
+const adminKey = "7hAs$"; // Admin key
 
 const app = express();
 
@@ -14,19 +14,29 @@ let dealer = {
 };
 
 let players = [
-    {name: "John", pot: null, bet: 0, cards: [], position: "1", "state": null}, 
-    {name: "Ben", pot: null, bet: 0, cards: [], position: "2", "state": null}, 
-    {name: "Tim", pot: null, bet: 0, cards: [], position: "3", "state": null}, 
+    {pot: null, bet: 0, cards: [], position: "1", "state": null}, 
+    {pot: null, bet: 0, cards: [], position: "2", "state": null}, 
+    {pot: null, bet: 0, cards: [], position: "3", "state": null}, 
 ]; // Players list
 
 let mode = null; // Part of the game
 
 app.use(bodyParser.json())
-app.use(express.static(path.join(__dirname, '../front-end/dist'))); // UI files
+app.use(express.static(path.join(__dirname, '../front-end/client/dist'))); // Client UI files
+app.use(express.static(path.join(__dirname, '../front-end/admin/dist'))); // Admin UI files
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../front-end', 'dist', 'index.html'));
+    res.sendFile(path.join(__dirname, '../front-end', 'client', 'dist', 'index.html'));
 }); // Sending default client UI
+
+app.get('/admin', (req, res) => {
+    const key = req.query.key;
+    if (key === adminKey) {
+        res.sendFile(path.join(__dirname, '../front-end', 'admin', 'dist', 'index.html'));
+    } else {
+        res.status(401).send('You are not allowed to access this resource');
+    }
+}); // Sending admin UI
 
 app.get('/send-players', (req, res) => {
     res.json({ players: players, dealer: dealer });
@@ -132,15 +142,6 @@ app.use((req, res, next) => {
     error.status = 404;
     next(error);
 }); // Error get requests routing
-
-app.use((err, req, res, next) => {
-    res.status(err.status || 500);
-    res.json({
-      error: {
-        message: err.message
-      }
-    });
-}); // Error handling
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

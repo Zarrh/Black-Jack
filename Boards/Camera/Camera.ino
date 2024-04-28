@@ -13,7 +13,6 @@ IPAddress netmask_IP(255, 255, 255, 0);
  
 WebServer server(80);
  
-static auto midRes = esp32cam::Resolution::find(350, 530);
 static auto hiRes = esp32cam::Resolution::find(1200, 900);
 
 void serveJpg()
@@ -43,16 +42,6 @@ void handleJpgHi()
   serveJpg();
 }
  
-void handleJpgMid()
-{
-  if (!esp32cam::Camera.changeResolution(midRes)) 
-  {
-    Serial.println("SET-MID-RES FAIL");
-  }
-  serveJpg();
-}
- 
- 
 void setup()
 {
   Serial.begin(115200);
@@ -78,11 +67,9 @@ void setup()
   }
   Serial.print("http://");
   Serial.println(WiFi.localIP());
-  Serial.println("  /cam-hi.jpg");
-  Serial.println("  /cam-mid.jpg");
+  Serial.println("  /photo.jpg");
  
-  server.on("/cam-hi.jpg", handleJpgHi);
-  server.on("/cam-mid.jpg", handleJpgMid);
+  server.on("/photo.jpg", handleJpgHi);
  
   server.begin();
 }

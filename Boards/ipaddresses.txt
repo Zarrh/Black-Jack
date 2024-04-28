@@ -1,5 +1,4 @@
 192.168.4.1 - Gateway
 192.168.4.10 - Camera
 192.168.4.11 - Main Server
-192.168.4.12 - Table
-255.255.255.0 - Netmask
+192.168.4.* - Table

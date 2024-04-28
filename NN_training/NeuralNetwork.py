@@ -112,6 +112,7 @@ if __name__ == '__main__':
             except requests.exceptions.RequestException as e:
                 print(f"Error sending cards: {e}")
             i = 0
+            time.sleep(3)
 
         cv2.imshow(TITLE, image)
         key = cv2.waitKey(5)

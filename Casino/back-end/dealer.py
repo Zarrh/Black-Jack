@@ -6,9 +6,9 @@ IPTable = '192.168.4.12'
 IPMainServer = '127.0.0.1'
 urlJS = f'http://{IPMainServer}:{PortJS}'
 players = [
-    {"name": "John", "pot": 300, "bet": 0, "cards": [], "position": "1", "state": "playing"}, 
-    {"name": "Ben", "pot": 400, "bet": 0, "cards": [], "position": "2", "state": "playing"}, 
-    {"name": "Tim", "pot": 500, "bet": 0, "cards": [], "position": "3", "state": "playing"}, 
+    {"pot": 500, "bet": 0, "cards": [], "position": "1", "state": "playing"}, 
+    {"pot": 500, "bet": 0, "cards": [], "position": "2", "state": "playing"}, 
+    {"pot": 500, "bet": 0, "cards": [], "position": "3", "state": "playing"}, 
 ]
 dealer = {"state": "playing"}
 mode = None # Part of the game: 0 -> just betting; 1 -> drawing or passing; 2 -> dealer's turn; 3 -> betting computations(bank.py)
