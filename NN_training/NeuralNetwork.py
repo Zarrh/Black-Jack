@@ -24,7 +24,7 @@ serverURL = f'http://{IPServer}/get-cards'
 image = None
 detections = []
 MIN_CONFIDENCE = 0.6
-MIN_CONSECUTIVE_FRAMES = 5
+MIN_CONSECUTIVE_FRAMES = 3
 
 def receive():
 
@@ -42,10 +42,6 @@ def receive():
     annotated_image = bounding_box_annotator.annotate(
         scene=im, detections=detections
     )
-
-    #print(detections.xyxy)
-    #print(detections.confidence)
-    #print(detections.data)
 
     annotated_image = label_annotator.annotate(
         scene=annotated_image, detections=detections
@@ -96,8 +92,7 @@ if __name__ == '__main__':
 
         i += 1
 
-        #print(new_detections)
-        if i == 4:
+        if i == MIN_CONSECUTIVE_FRAMES - 1:
             detections = []
             for card, box in zip(new_detections["cards"], new_detections["boxes"]):
                 card = card[:-1] + card[-1].lower()

@@ -14,9 +14,9 @@ const unsigned int positions[3] = {1, 2, 3};
 bool positions_ready[3] = {false, false, false};
 int pots[3] = {0, 0, 0};
 int bets[3] = {0, 0, 0};
-const unsigned int leftButtons[3] = {23, 23, 23};
-const unsigned int centerButtons[3] = {19, 19, 19};
-const unsigned int rightButtons[3] = {18, 18, 18};
+const unsigned int leftButtons[3] = {13, 27, 34};
+const unsigned int centerButtons[3] = {12, 26, 33};
+const unsigned int rightButtons[3] = {14, 25, 32};
 
 bool lastLeftStates[3] = {1, 1, 1};
 bool lastCenterStates[3] = {1, 1, 1};

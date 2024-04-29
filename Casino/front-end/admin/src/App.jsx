@@ -13,6 +13,7 @@ import {
 function App() {
   const [players, setPlayers] = useState([]);
   const [dealer, setDealer] = useState({"cards": []});
+  const [count, setCount] = useState(0);
 
   const cardMap = {
     "Ac": CAc, "Kc": CKc, "Qc": CQc, "Jc": CJc, "10c": C10c, "9c": C9c, "8c": C8c, "7c": C7c, "6c": C6c, "5c": C5c, "4c": C4c, "3c": C3c, "2c": C2c,
@@ -22,7 +23,7 @@ function App() {
   };
 
   const cardPositions = {
-    "Dealer": [["50%", "5%"], ["40%", "5%"], ["60%", "5%"]], // Dealer's positions
+    "Dealer": [["50%", "5%"], ["40%", "5%"], ["60%", "5%"], ["55%", "5%"], ["45%", "5%"]], // Dealer's positions
     "1": [["15%", "50%"], ["19%", "43%"], ["24%", "34%"]], // 1
     //"2": [["30%", "77%"], ["33%", "65%"], ["36%", "53%"]], // 2
     "2": [["50%", "87%"], ["50%", "74%"], ["50%", "61%"]], // 3
@@ -32,9 +33,9 @@ function App() {
 
   const potPositions = {
     "Dealer": ["50%", "37%"],
-    "1": ["5%", "79%"],
+    "1": ["4%", "75%"],
     "2": ["50%", "125%"],
-    "3": ["95%", "79%"],
+    "3": ["96%", "75%"],
   }; // Positions of the pots //
 
   const cardAngles = {
@@ -46,26 +47,55 @@ function App() {
     "3": "-51", // 5
   }; // Angles of the positions //
 
-  useEffect(() => {
+  const fetchPlayers = async () => {
+    try {
+      const response = await fetch('/send-players');
+      const data = await response.json();
+      setPlayers(data.players);
+      setDealer(data.dealer);
+      console.log(players);
+      console.log(dealer);
+    } catch (error) {
+      console.error('Error fetching players:', error);
+    }
+  };
 
-    const fetchPlayers = async () => {
-      try {
-        const response = await fetch('/send-players');
-        const data = await response.json();
-        setPlayers(data.players);
-        setDealer(data.dealer);
-        console.log(players);
-        console.log(dealer);
-      } catch (error) {
-        console.error('Error fetching players:', error);
-      }
-    };
+  useEffect(() => {
 
     fetchPlayers();
     const interval = setInterval(fetchPlayers, 2000);
 
     return () => clearInterval(interval);
   }, []);
+
+  let passedCards = [];
+
+  useEffect(() => {
+    const countCard = (card) => {
+      card = card.slice(0, -1);
+
+      if (card >= 2 && card <= 6) {
+        setCount(count + 1);
+      } else if (card == 10 || card == 'J' || card == 'Q' || card == 'K' || card == 'A') {
+        setCount(count - 1);
+      }
+    };
+
+    players.forEach(player => {
+      player.cards.forEach((card, index) => {
+        if (!passedCards.includes(card)) {
+          countCard(card);
+          passedCards.append(card);
+        }
+      });  
+    });
+    dealer.cards.forEach((card, index) => {
+      if (!passedCards.includes(card)) {
+        countCard(card);
+        passedCards.append(card);
+      }
+    });
+  }, [players, dealer]);
 
   return (
     <>
@@ -119,20 +149,33 @@ function App() {
               zIndex: 100, 
               transform: `translate(-50%, +25%) rotate(${cardAngles[player.position]}deg)`,
               fontSize: 50,
-              fontWeight: "bold"
+              fontWeight: "bold",
+              textAlign: "center"
             }}>
               {player["pot"]}$
-              {player["state"] == "busted" && (<span style={{color: "red"}}>Busted</span>)}
-              {player["state"] == "BJ" && (<span style={{color: "gold"}}>Black Jack</span>)}
               <br />
               {player["bet"]}$
+              <br />
+              {player["state"] == "busted" && (<span style={{color: "red"}}>Busted</span>)}
+              {player["state"] == "BJ" && (<span style={{color: "gold"}}>Black Jack</span>)}
+              {player["state"] == "win" && (<span style={{color: "green"}}>Win</span>)}
+              {player["state"] == "loss" && (<span style={{color: "red"}}>Loss</span>)}
+              {player["state"] == "push" && (<span style={{color: "grey"}}>Push</span>)}
             </div>
           </div>
         ))}
       </div>
 
+      <div className='dashboard-container'>
+        <h1><span style={{color: "#303030"}}>&#9824;</span><span style={{color: "#e60000"}}>&#9830;</span> Dashboard <span style={{color: "#303030"}}>&#9827;</span><span style={{color: "#e60000"}}>&#9829;</span></h1>
+        <div style={{textAlign: "center", fontSize: "30px"}}>
+          Card Count: <br />
+          <span style={{color: "gold"}}>{count}</span>
+        </div>
+      </div>
+
       <div className="footer-container">
-        Fagaraz Luca, Viezzer Tommaso, Zanco Simone
+        IoT Casino - Fagaraz Luca, Viezzer Tommaso, Zanco Simone - 2024
       </div>
     </>
   );

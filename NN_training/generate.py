@@ -459,7 +459,6 @@ for suit in card_suits:
         cards[card_name]=[]
         for f in glob(card_dir + "/*.png"):
             img=cv2.imread(f, cv2.IMREAD_UNCHANGED)
-            # TODO: Implement the findHull function #
             '''
             hullHL = findHull(img, refCornerHL, debug="no") 
             if hullHL is None: 

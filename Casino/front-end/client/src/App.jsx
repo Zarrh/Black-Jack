@@ -22,7 +22,7 @@ function App() {
   };
 
   const cardPositions = {
-    "Dealer": [["50%", "5%"], ["40%", "5%"], ["60%", "5%"]], // Dealer's positions
+    "Dealer": [["50%", "5%"], ["40%", "5%"], ["60%", "5%"], ["55%", "5%"], ["45%", "5%"]], // Dealer's positions
     "1": [["15%", "50%"], ["19%", "43%"], ["24%", "34%"]], // 1
     //"2": [["30%", "77%"], ["33%", "65%"], ["36%", "53%"]], // 2
     "2": [["50%", "87%"], ["50%", "74%"], ["50%", "61%"]], // 3
@@ -32,9 +32,9 @@ function App() {
 
   const potPositions = {
     "Dealer": ["50%", "37%"],
-    "1": ["5%", "79%"],
+    "1": ["4%", "75%"],
     "2": ["50%", "125%"],
-    "3": ["95%", "79%"],
+    "3": ["96%", "75%"],
   }; // Positions of the pots //
 
   const cardAngles = {
@@ -46,20 +46,20 @@ function App() {
     "3": "-51", // 5
   }; // Angles of the positions //
 
-  useEffect(() => {
+  const fetchPlayers = async () => {
+    try {
+      const response = await fetch('/send-players');
+      const data = await response.json();
+      setPlayers(data.players);
+      setDealer(data.dealer);
+      console.log(players);
+      console.log(dealer);
+    } catch (error) {
+      console.error('Error fetching players:', error);
+    }
+  };
 
-    const fetchPlayers = async () => {
-      try {
-        const response = await fetch('/send-players');
-        const data = await response.json();
-        setPlayers(data.players);
-        setDealer(data.dealer);
-        console.log(players);
-        console.log(dealer);
-      } catch (error) {
-        console.error('Error fetching players:', error);
-      }
-    };
+  useEffect(() => {
 
     fetchPlayers();
     const interval = setInterval(fetchPlayers, 2000);
@@ -119,20 +119,25 @@ function App() {
               zIndex: 100, 
               transform: `translate(-50%, +25%) rotate(${cardAngles[player.position]}deg)`,
               fontSize: 50,
-              fontWeight: "bold"
+              fontWeight: "bold",
+              textAlign: "center"
             }}>
               {player["pot"]}$
-              {player["state"] == "busted" && (<span style={{color: "red"}}>Busted</span>)}
-              {player["state"] == "BJ" && (<span style={{color: "gold"}}>Black Jack</span>)}
               <br />
               {player["bet"]}$
+              <br />
+              {player["state"] == "busted" && (<span style={{color: "red"}}>Busted</span>)}
+              {player["state"] == "BJ" && (<span style={{color: "gold"}}>Black Jack</span>)}
+              {player["state"] == "win" && (<span style={{color: "green"}}>Win</span>)}
+              {player["state"] == "loss" && (<span style={{color: "red"}}>Loss</span>)}
+              {player["state"] == "push" && (<span style={{color: "grey"}}>Push</span>)}
             </div>
           </div>
         ))}
       </div>
 
       <div className="footer-container">
-        Fagaraz Luca, Viezzer Tommaso, Zanco Simone
+        IoT Casino - Fagaraz Luca, Viezzer Tommaso, Zanco Simone - 2024
       </div>
     </>
   );
