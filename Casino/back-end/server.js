@@ -4,7 +4,7 @@ import path from 'path';
 
 const __dirname = path.resolve(); // Root
 const PORT = 5555; // Port
-const adminKey = "7hAs$"; // Admin key
+const adminKey = "7hAs"; // Admin key
 
 const app = express();
 

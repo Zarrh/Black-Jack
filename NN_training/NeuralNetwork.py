@@ -54,11 +54,11 @@ def get_zone(box: list):
     if (box[1] + box[3]) / 2 > HEIGHT*2 / 3:
         return "Dealer" # Under 2/3 of the screen
     if (box[0] + box[2]) / 2 < WIDTH / 3:
-        return 1 # Left side
+        return 3 # Left side
     if (box[0] + box[2]) / 2 > WIDTH / 3 and (box[0] + box[2]) / 2 < WIDTH*2 / 3:
         return 2 # Center side
     if (box[0] + box[2]) / 2 > WIDTH*2 / 3:
-        return 3 # Right side
+        return 1 # Right side
     else:
         return -1
             

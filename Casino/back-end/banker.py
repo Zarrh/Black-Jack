@@ -2,7 +2,7 @@ import requests
 import time
 
 PortJS = 5555
-resetKey = "7hAs$"
+resetKey = "7hAs"
 IPMainServer = '127.0.0.1'
 urlJS = f'http://{IPMainServer}:{PortJS}'
 players = [

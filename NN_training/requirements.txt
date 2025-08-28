@@ -1,0 +1,11 @@
+numpy
+opencv
+tqdm
+matplotlib
+pickle
+glob
+imgaug
+shapely
+ultralytics
+inference
+supervision
